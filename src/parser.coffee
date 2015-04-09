@@ -3,8 +3,10 @@ VASTResponse = require './response.coffee'
 VASTAd = require './ad.coffee'
 VASTUtil = require './util.coffee'
 VASTCreativeLinear = require('./creative.coffee').VASTCreativeLinear
+VASTCreativeNonLinear = require('./creative.coffee').VASTCreativeNonLinear
 VASTCreativeCompanion = require('./creative.coffee').VASTCreativeCompanion
 VASTMediaFile = require './mediafile.coffee'
+VASTNonLinearAd = require './nonlinearad.coffee'
 VASTCompanionAd = require './companionad.coffee'
 EventEmitter = require('events').EventEmitter
 
@@ -207,8 +209,10 @@ class VASTParser
                                     creative = @parseCreativeLinearElement creativeTypeElement
                                     if creative
                                         ad.creatives.push creative
-                                #when "NonLinearAds"
-                                    # TODO
+                                when "NonLinearAds"
+                                    creative = @parseCreativeNonLinearElement creativeTypeElement
+                                    if creative
+                                        ad.creatives.push creative
                                 when "CompanionAds"
                                     creative = @parseCompanionAd creativeTypeElement
                                     if creative
@@ -273,6 +277,29 @@ class VASTParser
                   else if maintainAspectRatio is "false" then mediaFile.maintainAspectRatio = false
                 
                 creative.mediaFiles.push mediaFile
+
+        return creative
+
+    @parseCreativeNonLinearElement: (creativeElement) ->
+        creative = new VASTCreativeNonLinear()
+
+        for trackingEventsElement in @childsByName(creativeElement, "TrackingEvents")
+            for trackingElement in @childsByName(trackingEventsElement, "Tracking")
+                eventName = trackingElement.getAttribute("event")
+                trackingURLTemplate = @parseNodeText(trackingElement)
+                if eventName? and trackingURLTemplate?
+                    creative.trackingEvents[eventName] ?= []
+                    creative.trackingEvents[eventName].push trackingURLTemplate
+
+        for nonLinearResource in @childsByName(creativeElement, "NonLinear")
+            nonLinearAd = new VASTNonLinearAd()
+            nonLinearAd.width = nonLinearResource.getAttribute("width")
+            nonLinearAd.height = nonLinearResource.getAttribute("height")
+            for staticElement in @childsByName(nonLinearResource, "StaticResource")
+                nonLinearAd.type = staticElement.getAttribute("creativeType") or 0
+                nonLinearAd.staticResource = @parseNodeText(staticElement)
+            nonLinearAd.nonLinearClickThroughURLTemplate = @parseNodeText(@childByName(nonLinearResource, "NonLinearClickThrough"))
+            creative.variations.push nonLinearAd
 
         return creative
 

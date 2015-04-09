@@ -33,6 +33,17 @@
           </Linear>
         </Creative>
         <Creative>
+          <NonLinearAds>
+            <TrackingEvents>
+              <Tracking event="creativeView"><![CDATA[http://example.com/creativeview]]></Tracking>
+            </TrackingEvents>
+            <NonLinear width="300" height="60">
+              <StaticResource creativeType="image/png"><![CDATA[http://cdn.liverail.com/adasset/228/8455/overlay.png]]></StaticResource>
+              <NonLinearClickThrough><![CDATA[http://example.com/non-linear-click-thru]]></NonLinearClickThrough>
+            </NonLinear>
+          </NonLinearAds>
+        </Creative>
+        <Creative>
           <CompanionAds>
             <Companion width="300" height="60">
               <StaticResource creativeType="image/jpeg"><![CDATA[http://example.com/static-resource]]></StaticResource>

@@ -45,8 +45,8 @@ describe 'VASTParser', ->
         it 'should have merged impression URLs', =>
             @response.ads[0].impressionURLTemplates.should.eql ["http://example.com/wrapper-impression", "http://example.com/impression1", "http://example.com/impression2", "http://example.com/impression3"]
 
-        it 'should have two creatives', =>
-            @response.ads[0].creatives.should.have.length 2
+        it 'should have three creatives', =>
+            @response.ads[0].creatives.should.have.length 3
 
         #Linear
         describe '#Linear', ->
@@ -84,12 +84,50 @@ describe 'VASTParser', ->
             it 'should have 2 urls for clicktracking', =>
                 linear.videoClickTrackingURLTemplates.should.eql ['http://example.com/clicktracking', 'http://example.com/wrapper-clicktracking']
 
+        #NonLinearAds
+        describe '#NonLinearAds', ->
+            nonLinears = null
+
+            before (done) =>
+                nonLinears = _response.ads[0].creatives[1]
+                done()
+
+            it 'should hane non-linear type', =>
+                nonLinears.type.should.equal "non-linear"
+
+            it 'should have 1 variation', =>
+                nonLinears.variations.should.have.length 1
+
+            it 'should have 1 tracking event', =>
+                nonLinears.trackingEvents.should.have.keys 'creativeView'
+
+            it 'should have 1 url for creativeView event', =>
+                nonLinears.trackingEvents['creativeView'].should.eql ['http://example.com/creativeview']
+
+            describe '#NonLinear', ->
+                nonLinear = null
+
+                before (done) =>
+                    nonLinear = nonLinears.variations[0]
+                    done()
+
+                it 'should have parsed size and type attributes', =>
+                    nonLinear.width.should.equal '300'
+                    nonLinear.height.should.equal '60'
+                    nonLinear.type.should.equal 'image/png'
+
+                it 'should have static resource', =>
+                    nonLinear.staticResource.should.eql 'http://cdn.liverail.com/adasset/228/8455/overlay.png'
+
+                it 'should have clickthrough url', =>
+                    nonLinear.nonLinearClickThroughURLTemplate.should.equal 'http://example.com/non-linear-click-thru'
+
         #Companions
         describe '#Companions', ->
             companions = null
 
             before (done) =>
-                companions = _response.ads[0].creatives[1]
+                companions = _response.ads[0].creatives[2]
                 done()
 
             it 'should have companion type', =>

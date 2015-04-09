@@ -18,6 +18,13 @@
           </CompanionAds>
         </Creative>
         <Creative>
+          <NonLinearAds>
+            <NonLinear width="300" height="60">
+              <NonLinearClickThrough><![CDATA[http://example.com/non-linear-click-thru]]></NonLinearClickThrough>
+            </NonLinear>
+          </NonLinearAds>
+        </Creative>
+        <Creative>
           <Linear>
             <TrackingEvents>
               <Tracking event="start"><![CDATA[http://example.com/wrapper-start]]></Tracking>

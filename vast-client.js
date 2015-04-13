@@ -1188,7 +1188,7 @@ VASTTracker = (function(_super) {
         this.emit('skip-countdown', 0);
       }
     }
-    if (this.linear && this.assetDuration > 0) {
+    if (this.assetDuration > 0) {
       events = [];
       if (progress > 0) {
         events.push("start");

@@ -53,7 +53,7 @@ class VASTTracker extends EventEmitter
                 @skipable = yes
                 @emit 'skip-countdown', 0
 
-        if @linear and @assetDuration > 0
+        if @assetDuration > 0
             events = []
 
             if progress > 0

@@ -160,13 +160,14 @@ class VASTParser
 
     @parseAdElement: (adElement) ->
         for adTypeElement in adElement.childNodes
+            id = adElement.getAttribute("id")
             if adTypeElement.nodeName is "Wrapper"
-                return @parseWrapperElement adTypeElement
+                return @parseWrapperElement adTypeElement, id
             else if adTypeElement.nodeName is "InLine"
-                return @parseInLineElement adTypeElement
+                return @parseInLineElement adTypeElement, id
 
-    @parseWrapperElement: (wrapperElement) ->
-        ad = @parseInLineElement wrapperElement
+    @parseWrapperElement: (wrapperElement, id) ->
+        ad = @parseInLineElement wrapperElement, id
         wrapperURLElement = @childByName wrapperElement, "VASTAdTagURI"
         if wrapperURLElement?
             ad.nextWrapperURL = @parseNodeText wrapperURLElement
@@ -190,11 +191,15 @@ class VASTParser
         if ad.nextWrapperURL?
             return ad
 
-    @parseInLineElement: (inLineElement) ->
+    @parseInLineElement: (inLineElement, id) ->
         ad = new VASTAd()
+        ad.id = id
 
         for node in inLineElement.childNodes
             switch node.nodeName
+                when "AdTitle"
+                    ad.title = @parseNodeText node
+
                 when "Error"
                     ad.errorURLTemplates.push (@parseNodeText node) if @isUrl node
 

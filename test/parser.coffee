@@ -36,6 +36,10 @@ describe 'VASTParser', ->
         it 'should have returned a VAST response object', =>
             @response.should.be.an.instanceOf(VASTResponse)
 
+        it 'should have parsed ad id and title', =>
+            @response.ads[0].id.should.eql "41993e28-6f21-4e6b-bbd4-b7de053b0951"
+            @response.ads[0].title.should.eql "Title"
+
         it 'should have merged top level error URLs', =>
             @response.errorURLTemplates.should.eql ["http://example.com/wrapper-error", "http://example.com/error"]
 

@@ -307,6 +307,8 @@ var VASTAd;
 
 VASTAd = (function() {
   function VASTAd() {
+    this.id = null;
+    this.title = null;
     this.errorURLTemplates = [];
     this.impressionURLTemplates = [];
     this.creatives = [];
@@ -803,21 +805,22 @@ VASTParser = (function() {
   };
 
   VASTParser.parseAdElement = function(adElement) {
-    var adTypeElement, _i, _len, _ref;
+    var adTypeElement, id, _i, _len, _ref;
     _ref = adElement.childNodes;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       adTypeElement = _ref[_i];
+      id = adElement.getAttribute("id");
       if (adTypeElement.nodeName === "Wrapper") {
-        return this.parseWrapperElement(adTypeElement);
+        return this.parseWrapperElement(adTypeElement, id);
       } else if (adTypeElement.nodeName === "InLine") {
-        return this.parseInLineElement(adTypeElement);
+        return this.parseInLineElement(adTypeElement, id);
       }
     }
   };
 
-  VASTParser.parseWrapperElement = function(wrapperElement) {
+  VASTParser.parseWrapperElement = function(wrapperElement, id) {
     var ad, creative, wrapperCreativeElement, wrapperURLElement, _i, _len, _ref;
-    ad = this.parseInLineElement(wrapperElement);
+    ad = this.parseInLineElement(wrapperElement, id);
     wrapperURLElement = this.childByName(wrapperElement, "VASTAdTagURI");
     if (wrapperURLElement != null) {
       ad.nextWrapperURL = this.parseNodeText(wrapperURLElement);
@@ -849,13 +852,17 @@ VASTParser = (function() {
     }
   };
 
-  VASTParser.parseInLineElement = function(inLineElement) {
+  VASTParser.parseInLineElement = function(inLineElement, id) {
     var ad, creative, creativeElement, creativeTypeElement, node, _i, _j, _k, _len, _len1, _len2, _ref, _ref1, _ref2;
     ad = new VASTAd();
+    ad.id = id;
     _ref = inLineElement.childNodes;
     for (_i = 0, _len = _ref.length; _i < _len; _i++) {
       node = _ref[_i];
       switch (node.nodeName) {
+        case "AdTitle":
+          ad.title = this.parseNodeText(node);
+          break;
         case "Error":
           if (this.isUrl(node)) {
             ad.errorURLTemplates.push(this.parseNodeText(node));
